@@ -8,8 +8,7 @@
             :probe-type='3'
             @scroll="GetPosition"
             :pull-up-load='true'
-            @pullingUp="LoadMore"
-    >
+            @pullingUp="LoadMore">
       <home-swiper :banners="banners" :recommend="recommends"/>
       <recommend :recommend="recommends"/>
       <h1 class="popularTitle">今日流行</h1>
