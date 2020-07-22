@@ -1,17 +1,14 @@
 <template>
-  <div class="details">
-    <detail-nav></detail-nav>
-    <scroll :pull-up-load='false'
-            ref="scroll"
-            class="view details"
-    >
+  <div class="details_all">
+    <detail-nav @tabClick="goToNavTop"></detail-nav>
+    <scroll :pull-up-load='false' ref="scroll" class="view details">
       <detail-swiper :banners="topImages"></detail-swiper>
       <detail-show :get-columns="goodsInfo"></detail-show>
       <detail-shop-info :shop="shop"></detail-shop-info>
       <detail-goods-info :detail-info="detailInfo"></detail-goods-info>
-      <detail-param-info :param-info="paramInfo"></detail-param-info>
-      <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
-      <goods-list :goods="recommend"></goods-list>
+      <detail-param-info ref="params" :param-info="paramInfo"></detail-param-info>
+      <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
+      <goods-list ref="recommend" :goods="recommend"></goods-list>
     </scroll>
   </div>
 </template>
@@ -54,12 +51,14 @@
         detailInfo: {},
         paramInfo: {},
         commentInfo: {},
-        recommend: []
+        recommend: [],
+        navTop: [0]
 
       }
     },
     created () {
       // 获取当前商品的iid
+      // console.log(this.$route)
       this.iid = this.$route.params.iid
       // 获取详情数据
       getDetails(this.iid).then((res) => {
@@ -68,7 +67,7 @@
         this.topImages = data.itemInfo.topImages
         // 获取轮播图
         this.goodsInfo = new goodsInfo(data.itemInfo, data.columns, data.shopInfo.services)
-        // 获取 昌平信息
+        // 获取产品基础信息
         this.shop = new shop(data.shopInfo)
         // 获取商店信息
         this.detailInfo = data.detailInfo
@@ -76,18 +75,33 @@
         this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
         // 保存参数信息
         if (data.rate.list) {
+          // 展示第一条评论
           this.commentInfo = data.rate.list[0]
         }
       })
       // 获取推荐数据
       getRecommond().then((res) => {
-        console.log(res, ' 我是recommend')
+        // console.log(res, ' 我是recommend')
         this.recommend = res.data.data.list
-
-        console.log(res.data.data.list)
       })
     },
     methods: {
+      getNavTop () {
+        //获取
+        this.navTop = [0]
+        if (this.$refs.params || this.$refs.comment || this.$refs.recommend) {
+          this.navTop[1] = -(this.$refs.params.$el.offsetTop - 49)
+          this.navTop[2] = -(this.$refs.comment.$el.offsetTop - 49)
+          this.navTop[3] = -(this.$refs.recommend.$el.offsetTop - 49)
+        }
+      },
+      goToNavTop (index) {
+        // 去
+        this.scrollTo(0, this.navTop[index], 500)
+      },
+      scrollTo (x, y, delay = 0) {
+        this.$refs.scroll && this.$refs.scroll.scroll && this.$refs.scroll.scroll.scrollTo(x, y, delay)
+      },
       refresh () {
         if (this.$refs.scroll) {
           this.$refs.scroll.refresh()
@@ -97,25 +111,26 @@
       }
     },
     mounted () {
-      let refresh = debounce(this.refresh(), 10000)
+      let refresh = debounce(this.refresh(), 1000)
       this.$bus.$on('detailGoodsLoad', () => {
         // this.refresh()
         refresh()
-        console.log('我完成了一次detailGoodload的加载')
+        this.getNavTop()
+        // console.log('我完成了一次detailGoodload的加载')
       })
       this.$bus.$on('recommendLoad', () => {
         // 一定要判断scroll是否已经生成了 不然会报错
         // this.refresh()
         refresh()
-        console.log('我完成了一次recommend的加载')
+        this.getNavTop()
+        // console.log('我完成了一次recommend的加载')
       })
-
     }
   }
 </script>
 
 <style scoped>
-  .details {
+  .details_all {
     margin-bottom: 28px;
   }
 

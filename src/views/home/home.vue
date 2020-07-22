@@ -87,31 +87,38 @@
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
-      // console.log(this.$route)
     },
     mounted () {
-      // console.log(this.$refs.scroll, 123)
       const refresh = debounce(this.refresh(), 50)
       // 防抖
       this.$bus.$on('refreshImg', () => {
-        // refresh()
         refresh()
-        console.log('woshihome里的刷新', '我在home中')
       })
     },
     activated () {
-      console.log(typeof this.y)
+      // console.log('进页面的时候Y的值', this.y)
       this.scrollTo(0, this.y)
       this.refresh()
     },
     deactivated () {
-      this.y = this.getScrollY
+      this.y = this.getScrollY()
+      // console.log('离开页面的时候Y的值', this.y)
     },
     methods: {
       /*
       *事件监听
-      */scrollTo (x, y, delay = 0) {
-        this.$refs.scroll && this.$refs.scroll.scroll.scrollTo(x, y, delay)
+      */
+      getScrollY () {
+        if (this.$refs.scroll) {
+          return this.$refs.scroll.scroll.startY
+        } else {
+          return 0
+        }
+      },
+      scrollTo (x, y, delay = 0) {
+        // console.log(this.$refs.scroll.scroll)
+        // console.log(`跳转时x的值${x},跳转的时候y的值${y}`)
+        this.$refs.scroll && this.$refs.scroll.scroll && this.$refs.scroll.scroll.scrollTo(x, y, delay)
       },
       refresh () {
         this.$refs.scroll && this.$refs.scroll.refresh()
@@ -149,6 +156,7 @@
         this.isShowToTop = position.y < 0
         this.isTop = (-position.y + 93) > this.topOffSetTop
       },
+      // 下拉加载更多
       LoadMore () {
         this.getHomeGoods(this.currentControl)
       },
@@ -158,7 +166,7 @@
       getHomeMultidata () {
         getHomeMultidata()
           .then((res) => {
-            console.log(res)
+            // console.log(res)
             this.banners = res.data.data.banner.list
             this.recommends = res.data.data.recommend.list
             this.keywords = res.data.data.keywords.list.splice(3, 4)
@@ -181,13 +189,6 @@
     computed: {
       showGoods () {
         return this.goods[this.currentControl].list
-      },
-      getScrollY () {
-        if (this.$refs.scroll) {
-          return this.$refs.scroll.scroll.scrollY
-        } else {
-          return 0
-        }
       }
     }
   }
