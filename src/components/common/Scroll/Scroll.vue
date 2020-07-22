@@ -39,23 +39,34 @@
         pullUpLoad: this.pullUpLoad
       })
       this.scroll.on('scroll', (position) => {
-        // console.log(position.x,position.y)
         this.$emit('scroll', position)
       })
       this.scroll.on('pullingUp', () => {
         this.$emit('pullingUp')
         // 在发生下拉刷新的时候把事件传给父组件
       })
+      this.scroll.on('scroll', (position) => {
+        this.$emit('detailScroll', position)
+      })
     },
     methods: {
       scrollTo (x, y, time = 300) {
-        this.scroll.scrollTo(x, y, time)
+        this.scroll && this.scroll.scrollTo(x, y, time)
       },
       refresh () {
         setTimeout(() => {
-          this.scroll.refresh()
+          this.scroll && this.scroll.refresh()
         }, 10)
       }
+      // chooseScroll () {
+      //   if (this.$route.path.indexOf('home') !== -1) {
+      //     // 如果路径中包含home
+      //     this.scroll.once('scroll', (position) => this.$emit('scroll', position))
+      //   } else if (this.$route.path.indexOf('detail') !== -1) {
+      //     this.scroll.once('scroll', (position) => this.$emit('detailScroll', position))
+      //   }
+      // }
+
     }
   }
 </script>

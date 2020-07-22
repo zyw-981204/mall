@@ -1,7 +1,14 @@
 <template>
   <div class="details_all">
-    <detail-nav @tabClick="goToNavTop"></detail-nav>
-    <scroll :pull-up-load='false' ref="scroll" class="view details">
+    <detail-nav
+            ref="detailNav"
+            @tabClick="goToNavTop"
+    ></detail-nav>
+    <scroll :pull-up-load='false'
+            ref="scroll"
+            :probe-type="3"
+            class="view details"
+            @detailScroll="getDetailScroll">
       <detail-swiper :banners="topImages"></detail-swiper>
       <detail-show :get-columns="goodsInfo"></detail-show>
       <detail-shop-info :shop="shop"></detail-shop-info>
@@ -53,7 +60,6 @@
         commentInfo: {},
         recommend: [],
         navTop: [0]
-
       }
     },
     created () {
@@ -107,6 +113,34 @@
           this.$refs.scroll.refresh()
         } else {
           return {}
+        }
+      },
+      getDetailScroll (position) {
+        // if (position.y > this.navTop[1]) {
+        //   this.$refs.detailNav.currentIndex = 0
+        //   this.count++
+        // } else if (position.y > this.navTop[2]) {
+        //   this.$refs.detailNav.currentIndex = 1
+        //   this.count++
+        // } else if (position.y > this.navTop[3]) {
+        //   this.$refs.detailNav.currentIndex = 2
+        //   this.count++
+        // } else {
+        //   this.$refs.detailNav.currentIndex = 3
+        //   this.count++
+        // }
+
+        if ((this.$refs.detailNav.currentIndex !== 0) && position.y > this.navTop[1]) {
+          this.$refs.detailNav.currentIndex = 0
+        }
+        if ((this.$refs.detailNav.currentIndex !== 1) && (position.y < this.navTop[1]) && position.y > this.navTop[2]) {
+          this.$refs.detailNav.currentIndex = 1
+        }
+        if ((this.$refs.detailNav.currentIndex !== 2) && (position.y < this.navTop[2]) && position.y > this.navTop[3]) {
+          this.$refs.detailNav.currentIndex = 2
+        }
+        if ((this.$refs.detailNav.currentIndex !== 3) && position.y < this.navTop[3]) {
+          this.$refs.detailNav.currentIndex = 3
         }
       }
     },
