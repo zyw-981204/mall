@@ -6,7 +6,7 @@
     <tab-control
             :titles="['流行','新款','精选']"
             @tabClick="tabClick"
-            ref="tabControl"
+            ref="tabControl0"
             v-show="isTop"
             class="tab_control"/>
     <scroll
@@ -87,6 +87,7 @@
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
+      // console.log(this.$route)
     },
     mounted () {
       // console.log(this.$refs.scroll, 123)
@@ -133,6 +134,9 @@
             this.currentControl = 'sell'
             break
         }
+        // 对tab-control的不统一进行统一
+        this.$refs.tabControl0.currentIndex = index
+        this.$refs.tabControl1.currentIndex = index
       },
       // 点击回到顶部
       ToTopClick () {
@@ -154,7 +158,7 @@
       getHomeMultidata () {
         getHomeMultidata()
           .then((res) => {
-            // console.log(res)
+            console.log(res)
             this.banners = res.data.data.banner.list
             this.recommends = res.data.data.recommend.list
             this.keywords = res.data.data.keywords.list.splice(3, 4)
@@ -166,7 +170,6 @@
         var page = this.goods[type].page + 1
         // 请求上一次请求的页面后面一页
         getHomeGoods(type, page).then(res => {
-          console.log(this.goods)
           this.goods[type].list.push(...res.data.data.list)
           this.goods[type].page += 1
           this.$refs.scroll && this.$refs.scroll.scroll.finishPullUp()
