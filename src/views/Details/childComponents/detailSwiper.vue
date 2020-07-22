@@ -1,9 +1,7 @@
 <template>
   <swiper class="swiper swiper-home" :options="swiperOption">
     <swiper-slide v-for="banner in banners" :key="banner.key">
-      <a :href="banner.link">
-        <img :src="banner.image" class="full-width">
-      </a>
+      <img :src="banner" class="full-width">
     </swiper-slide>
     <div class="swiper-pagination" slot="pagination"></div>
   </swiper>
@@ -14,7 +12,7 @@
   import 'swiper/css/swiper.css'
 
   export default {
-    name: 'swiper-example-loop',
+    name: 'detailSwiper',
     title: 'Loop mode / Infinite loop',
     data () {
       return {
@@ -34,8 +32,9 @@
         }
       }
     },
+    methods: {},
     props: {
-      banners: [Array, Object],
+      banners: [Array, Object]
     },
     components: {
       Swiper,
@@ -45,17 +44,16 @@
   }
 </script>
 
-<style>
+<style scoped>
   .swiper-home {
-    margin: 49px 0 0;
     width: 100%;
+    margin-top: 49px;
+    height: 50vh;
+    /*overflow: hidden;*/
   }
 
   .full-width {
-    display: block;
     width: 100%;
-  }
-  .swiper-pagination-bullet-active{
-    background: #ff8198;
+    display: block;
   }
 </style>

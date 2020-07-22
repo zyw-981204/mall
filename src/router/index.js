@@ -5,9 +5,9 @@ const Profile = () => import('@/views/profile/profile')
 const Cart = () => import('@/views/cart/cart')
 const Home = () => import('@/views/home/home')
 const CateGory = () => import('@/views/category/category')
-const NotFound = ()=> import('@/views/notfound/notfound')
-const  MainTabBar =()=>import('@/components/content/MainTabBar/MainTabBar')
-const  Swiper =()=>import('@/components/common/Swiper/swiper1')
+const NotFound = () => import('@/views/notfound/notfound')
+const MainTabBar = () => import('@/components/content/MainTabBar/MainTabBar')
+const Details = () => import('@/views/Details/Details')
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -42,10 +42,11 @@ const router = new VueRouter({
       path: '/maintabbar',
       name: 'maintabbar',
       component: MainTabBar
-    },{
-      path: '/Swiper',
-      name: 'Swiper',
-      component: Swiper
+    },
+    {
+      path: '/details/:iid',
+      name: 'Details',
+      component: Details
     },
     {
       path: '*',

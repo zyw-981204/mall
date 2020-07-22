@@ -2,7 +2,7 @@
   <swiper class="swiper swiper-home" :options="swiperOption">
     <swiper-slide v-for="banner in banners" :key="banner.key">
       <a :href="banner.link">
-        <img :src="banner.image" class="full-width">
+        <img :src="banner.image" class="full-width" @load="isLoad">
       </a>
     </swiper-slide>
     <div class="swiper-pagination" slot="pagination"></div>
@@ -34,6 +34,12 @@
         }
       }
     },
+    methods: {
+      isLoad () {
+        console.log('已经加载完成')
+        this.$emit('HomeSwiperLoad')
+      }
+    },
     props: {
       banners: [Array, Object],
       recommend: [Array, Object]
@@ -46,7 +52,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .swiper-home {
     margin: 49px 0 0;
     width: 100%;

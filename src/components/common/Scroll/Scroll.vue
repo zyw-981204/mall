@@ -13,7 +13,7 @@
     name: 'Scroll',
     data () {
       return {
-        scroll: null
+        scroll: {}
       }
     },
     props: {
@@ -31,7 +31,7 @@
       }
     },
     mounted () {
-      console.log(this.$refs.wrapper)
+      // console.log(this.$refs.wrapper)
       this.scroll = new BScroll(this.$refs.wrapper, {
         scrollY: true,
         click: true,
@@ -45,22 +45,17 @@
       this.scroll.on('pullingUp', () => {
         this.$emit('pullingUp')
         // 在发生下拉刷新的时候把事件传给父组件
-        // 在2秒后实现完成上拉加载更多
-        setTimeout(() => {
-          this.scroll.finishPullUp()
-        }, 2000)
       })
     },
     methods: {
       scrollTo (x, y, time = 300) {
         this.scroll.scrollTo(x, y, time)
+      },
+      refresh () {
+        setTimeout(() => {
+          this.scroll.refresh()
+        }, 10)
       }
-      // loadingMore (loadingMoreInfo) {
-      //   this.scroll.on('pullingUp', (loadingMoreInfo) => {
-      //     console.log('上拉加载更多')
-      //   })
-      // this.scroll.finishPullUp()
-      // }
     }
   }
 </script>

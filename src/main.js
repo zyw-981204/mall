@@ -8,6 +8,7 @@ import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/css/swiper.css'
 
 Vue.use(VueAwesomeSwiper)
+Vue.prototype.$bus = new Vue()
 
 Vue.config.productionTip = false
 

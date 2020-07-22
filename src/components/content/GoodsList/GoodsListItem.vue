@@ -1,8 +1,8 @@
 <template>
-  <div class="goods-list-item">
-    <a :href="goodsItem.link">
-      <img :src="goodsItem.show.img">
-    </a>
+  <div class="goods-list-item" @click="goToDetail">
+    <!--    对gooodslist进行复用-->
+    <img v-if="goodsItem.show" :src="goodsItem.show.img" @load="imgLoad">
+    <img v-else :src="goodsItem.image" @load="recommendLoad">
     <p class="goods-list-item-description" :title="goodsItem.title">{{goodsItem.title}}</p>
     <span class="goods-list-item-price">￥{{goodsItem.price}}</span>
     <span class="goods-list-item-cfav">❥{{goodsItem.cfav}}</span>
@@ -18,6 +18,17 @@
         default () {
           return {}
         }
+      }
+    },
+    methods: {
+      imgLoad () {
+        this.$bus.$emit('refreshImg')
+      },
+      recommendLoad () {
+        this.$bus.$emit('recommendLoad')
+      },
+      goToDetail () {
+        this.$router.push('/details/' + this.goodsItem.iid)
       }
     }
 

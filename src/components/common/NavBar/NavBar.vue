@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-bar">
+  <div class="nav-bar" :style='style'>
     <div class="left">
       <slot name="left"></slot>
     </div>
@@ -14,13 +14,37 @@
 
 <script>
   export default {
-    name: 'NavBar'
+    name: 'NavBar',
+    props: {
+      background: {
+        type: String,
+        default () {
+          return '#ff8198'
+        }
+      },
+      color: {
+        type: String,
+        default () {
+          return '#000'
+        }
+      }
+    },
+    computed: {
+      backgroundWanted () {
+        return `background:${this.background};`
+      },
+      colorWanted () {
+        return `color:${this.color};`
+      },
+      style () {
+        return `background:${this.background}; color:${this.color};`
+      }
+    }
   }
 </script>
 
 <style scoped>
   .nav-bar {
-    background: #ff8198;
     width: 100%;
     display: flex;
     position: fixed;

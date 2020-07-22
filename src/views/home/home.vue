@@ -3,29 +3,44 @@
     <nav-bar>
       <template slot="center">购物街</template>
     </nav-bar>
-    <scroll class="view"
+    <tab-control
+            :titles="['流行','新款','精选']"
+            @tabClick="tabClick"
+            ref="tabControl"
+            v-show="isTop"
+            class="tab_control"/>
+    <scroll
+            class="view"
             ref="scroll"
-            :probe-type='3'
+            :probe-type='2'
             @scroll="GetPosition"
             :pull-up-load='true'
             @pullingUp="LoadMore">
-      <home-swiper :banners="banners" :recommend="recommends"/>
+      <home-swiper
+              :banners="banners"
+              :recommend="recommends"
+              @HomeSwiperLoad="getOffSetTop"
+      />
       <recommend :recommend="recommends"/>
       <h1 class="popularTitle">今日流行</h1>
       <Popular :keywords='keywords'></Popular>
       <tab-control
               :titles="['流行','新款','精选']"
-              class="tab-control"
-              @tabClick="tabClick"/>
+              :class="{tab_control: this.isTop}"
+              @tabClick="tabClick"
+              ref="tabControl1"
+              v-show="!isTop"
+      />
       <goods-list :goods="showGoods"/>
     </scroll>
-    <to-top @click.native="ToTopClick" v-show="isShowToTop"/>
+    <to-top @click.native="ToTopClick"
+            v-show="isShowToTop"/>
   </div>
 </template>
-
 <script>
   //引入方法
   import { getHomeMultidata, getHomeGoods } from '../../api/home'
+  import { debounce } from '../../utils/debounce'
   // 引入组件
   import NavBar from '../../components/common/NavBar/NavBar'
   import HomeSwiper from './HomeChildComponent/HomeSwiper'
@@ -51,7 +66,10 @@
           'sell': { page: 0, list: [] }
         },
         currentControl: 'pop',// 用来控制当前选择的goods是什么
-        isShowToTop: false
+        isShowToTop: false,
+        topOffSetTop: 0,
+        isTop: false,
+        y: 0
       }
     },
     components: {
@@ -70,10 +88,38 @@
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
     },
+    mounted () {
+      // console.log(this.$refs.scroll, 123)
+      const refresh = debounce(this.refresh(), 50)
+      // 防抖
+      this.$bus.$on('refreshImg', () => {
+        // refresh()
+        refresh()
+        console.log('woshihome里的刷新', '我在home中')
+      })
+    },
+    activated () {
+      console.log(typeof this.y)
+      this.scrollTo(0, this.y)
+      this.refresh()
+    },
+    deactivated () {
+      this.y = this.getScrollY
+    },
     methods: {
       /*
       *事件监听
-      */
+      */scrollTo (x, y, delay = 0) {
+        this.$refs.scroll && this.$refs.scroll.scroll.scrollTo(x, y, delay)
+      },
+      refresh () {
+        this.$refs.scroll && this.$refs.scroll.refresh()
+      },
+      getOffSetTop () {
+        this.topOffSetTop = this.$refs.tabControl1.$el.offsetTop
+        // offsetTop：元素到offsetParent顶部的距离 具有定位属性的祖宗元素
+        // console.log(this.topOffSetTop)
+      },
       // 对切换进行转换
       tabClick (index) {
         switch (index) {
@@ -90,17 +136,14 @@
       },
       // 点击回到顶部
       ToTopClick () {
-        this.$refs.scroll.scrollTo(0, 0, 500)
+        this.$refs.scroll && this.$refs.scroll.scrollTo(0, 0, 500)
         // 可以给组件设置节点然后可以获取里面的属性和方法
       },
       // 获取现在滚动到哪里了 来控制回到顶部按钮是否显示
       GetPosition (position) {
-        // console.log(position.y)
-        if (position.y < 0) {
-          this.isShowToTop = true
-        } else {
-          this.isShowToTop = false
-        }
+        // console.log(-position.y)
+        this.isShowToTop = position.y < 0
+        this.isTop = (-position.y + 93) > this.topOffSetTop
       },
       LoadMore () {
         this.getHomeGoods(this.currentControl)
@@ -126,7 +169,8 @@
           console.log(this.goods)
           this.goods[type].list.push(...res.data.data.list)
           this.goods[type].page += 1
-          this.$refs.scroll.scroll.refresh()
+          this.$refs.scroll && this.$refs.scroll.scroll.finishPullUp()
+          this.$refs.scroll && this.$refs.scroll.scroll.refresh()
           // 对现在的页面进行更新
         })
       }
@@ -134,12 +178,19 @@
     computed: {
       showGoods () {
         return this.goods[this.currentControl].list
+      },
+      getScrollY () {
+        if (this.$refs.scroll) {
+          return this.$refs.scroll.scroll.scrollY
+        } else {
+          return 0
+        }
       }
     }
   }
 </script>
 
-<style>
+<style scoped>
   #home {
     width: 100%;
     height: 100vh;
@@ -151,9 +202,13 @@
     padding: 5px 0 5px 0;
   }
 
-  .tab-control {
-    position: sticky;
-    top: 44px;
+  .tab_control {
+    transition: all 4s;
+    position: fixed;
+    top: 49px;
+    left: 0;
+    right: 0;
+    z-index: 9;
   }
 
   .view {
