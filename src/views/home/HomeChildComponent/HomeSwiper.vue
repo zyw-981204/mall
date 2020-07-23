@@ -36,7 +36,7 @@
     },
     methods: {
       isLoad () {
-        console.log('已经加载完成')
+        // console.log('已经加载完成')
         this.$emit('HomeSwiperLoad')
       }
     },

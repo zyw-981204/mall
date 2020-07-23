@@ -1,37 +1,24 @@
 <template>
   <div id="category">
-    <div class="content">
-      <ul>
-        <li>123123123</li>
-        <li>123123123</li>
-        <li>123123123</li>
-        <li>123123123</li>
-      </ul>
-    </div>
+    <nav-bar>
+      <div slot="center">分类</div>
+    </nav-bar>
   </div>
 </template>
 
 <script>
-  import BScroll from 'better-scroll'
-
+  import NavBar from '../../components/common/NavBar/NavBar'
   export default {
     name: 'category',
+    components: { NavBar },
     data () {
       return {}
     },
     mounted () {
-      new BScroll('#category', {})
     }
   }
 </script>
 
-<style>
-  #category {
-    height: 200px;
-    background: red;
-  }
+<style scoped>
 
-  .content {
-
-  }
 </style>

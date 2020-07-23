@@ -1,4 +1,4 @@
-export function debounce (func, delay) {
+export function debounce (func, delay = 50) {
   let timer = null
 
   return function (...args) {
@@ -6,7 +6,10 @@ export function debounce (func, delay) {
       clearTimeout(timer)
     }
     timer = setTimeout(() => {
-      func.apply(this, args)
+      if (!func) {
+      } else {
+        func.apply(this, args)
+      }
     }, delay)
   }
 }

@@ -37,6 +37,7 @@
   import GoodsList from '../../components/content/GoodsList/GoodsList'
   // 引入方法
   import { getDetails, goodsInfo, shop, GoodsParam, getRecommond } from '../../api/details'
+  import { cartItem } from '../../api/cart'
   import { debounce } from '../../utils/debounce'
   import DetailBottomBar from './childComponents/DetailsBottomBar'
   import { backTopMixin } from '../../utils/mixin'
@@ -54,7 +55,9 @@
         paramInfo: {},
         commentInfo: {},
         recommend: [],
-        navTop: [0]
+        navTop: [0],
+        amount: 0,
+        goods: {}
       }
     },
     components: {
@@ -71,7 +74,9 @@
     },
     methods: {
       addToCart () {
-        this.$store.emit('', this.$route.params.iid)
+        this.goods = new cartItem(this.goodsInfo, this.topImages[0], this.amount, this.iid)
+        console.log(this.goods, 111)
+        this.$store.dispatch('addGoods', this.goods)
       },
       getNavTop () {
         //获取
@@ -136,6 +141,7 @@
         this.topImages = data.itemInfo.topImages
         // 获取轮播图
         this.goodsInfo = new goodsInfo(data.itemInfo, data.columns, data.shopInfo.services)
+        this.goodsInfo.say()
         // 获取产品基础信息
         this.shop = new shop(data.shopInfo)
         // 获取商店信息
