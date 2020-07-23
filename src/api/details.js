@@ -25,10 +25,6 @@ export class goodsInfo {
     this.columuns = columns
     this.services = services
   }
-
-  say () {
-    console.log(this.newPrice, '我是say')
-  }
 }
 
 export class GoodsParam {

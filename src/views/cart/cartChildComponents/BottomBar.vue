@@ -19,11 +19,9 @@
       totalPrice () {
         if (!this.$store.getters.goodsList) {} else {
           const cartList = this.$store.getters.goodsList
-          console.log(cartList)
           return cartList.filter(item => {
             return item.checked
           }).reduce((preValue, item) => {
-            console.log(preValue, item.amount, item.price, item.count)
             return preValue + item.amount * item.price
           }, 0).toFixed(2)
         }

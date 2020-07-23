@@ -141,7 +141,6 @@
         this.topImages = data.itemInfo.topImages
         // 获取轮播图
         this.goodsInfo = new goodsInfo(data.itemInfo, data.columns, data.shopInfo.services)
-        this.goodsInfo.say()
         // 获取产品基础信息
         this.shop = new shop(data.shopInfo)
         // 获取商店信息
