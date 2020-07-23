@@ -13,18 +13,21 @@ export function getRecommond () {
   return require({
     url: '/recommend'
   })
-
 }
 
 export class goodsInfo {
   constructor (itemInfo, columns, services) {
     this.title = itemInfo.title
     this.desc = itemInfo.desc
-    this.newPrice = itemInfo.price
+    this.newPrice = itemInfo.price.match(/\d{1,4}/).join('') * 1
     this.oldPrice = itemInfo.oldPrice
     this.discount = itemInfo.discountDesc
     this.columuns = columns
     this.services = services
+  }
+
+  say () {
+    console.log(this.newPrice, '我是say')
   }
 }
 
@@ -45,5 +48,17 @@ export class shop {
     this.sells = shopInfo.cSells
     this.score = shopInfo.score
     this.goodsCount = shopInfo.cGoods
+  }
+}
+
+export class cartItem {
+  constructor (goodsInfo, img, amount, iid) {
+    this.desc = goodsInfo.desc
+    this.price = goodsInfo.newPrice
+    this.title = goodsInfo.title
+    this.image = img
+    this.iid = iid
+    this.amount = amount
+    this.checked = true
   }
 }
