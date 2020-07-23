@@ -3,7 +3,7 @@
     <keep-alive exclude="Details">
       <router-view></router-view>
     </keep-alive>
-    <main-tab-bar></main-tab-bar>
+    <main-tab-bar v-if="isShow"></main-tab-bar>
   </div>
 </template>
 <script>
@@ -13,6 +13,20 @@
     name: 'App',
     components: {
       MainTabBar
+    },
+    data () {
+      return {
+        isShow: true
+      }
+    },
+    watch: {
+      $route: function f () {
+        if (this.$route.path.indexOf('details') !== -1) {
+          this.isShow = false
+        } else {
+          this.isShow = true
+        }
+      }
     }
   }
 

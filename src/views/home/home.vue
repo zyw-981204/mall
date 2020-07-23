@@ -12,7 +12,7 @@
     <scroll
             class="view"
             ref="scroll"
-            :probe-type='2'
+            :probe-type='3'
             @scroll="GetPosition"
             :pull-up-load='true'
             @pullingUp="LoadMore">
@@ -49,7 +49,7 @@
   import TabControl from '../../components/content/TabControl/TabControl'
   import GoodsList from '../../components/content/GoodsList/GoodsList'
   import Scroll from '../../components/common/Scroll/Scroll'
-  import ToTop from '../../components/common/ToTop/ToTop'
+  import { backTopMixin } from '../../utils/mixin'
 
   // 引入样式表
 
@@ -66,12 +66,11 @@
           'sell': { page: 0, list: [] }
         },
         currentControl: 'pop',// 用来控制当前选择的goods是什么
-        isShowToTop: false,
         topOffSetTop: 0,
-        isTop: false,
         y: 0
       }
     },
+    mixins: [backTopMixin],
     components: {
       GoodsList,
       Popular,
@@ -79,8 +78,7 @@
       HomeSwiper,
       recommend,
       TabControl,
-      Scroll,
-      ToTop
+      Scroll
     },
     created () {
       this.getHomeMultidata()
@@ -145,14 +143,9 @@
         this.$refs.tabControl0.currentIndex = index
         this.$refs.tabControl1.currentIndex = index
       },
-      // 点击回到顶部
-      ToTopClick () {
-        this.$refs.scroll && this.$refs.scroll.scrollTo(0, 0, 500)
-        // 可以给组件设置节点然后可以获取里面的属性和方法
-      },
+
       // 获取现在滚动到哪里了 来控制回到顶部按钮是否显示
       GetPosition (position) {
-        // console.log(-position.y)
         this.isShowToTop = position.y < 0
         this.isTop = (-position.y + 93) > this.topOffSetTop
       },

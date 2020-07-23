@@ -17,6 +17,10 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
       <goods-list ref="recommend" :goods="recommend"></goods-list>
     </scroll>
+    <to-top @click.native="ToTopClick"
+            v-show="isShowToTop"/>
+    <detail-bottom-bar
+            @addToCart="addToCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -34,20 +38,11 @@
   // 引入方法
   import { getDetails, goodsInfo, shop, GoodsParam, getRecommond } from '../../api/details'
   import { debounce } from '../../utils/debounce'
+  import DetailBottomBar from './childComponents/DetailsBottomBar'
+  import { backTopMixin } from '../../utils/mixin'
 
   export default {
     name: 'Details',
-    components: {
-      GoodsList,
-      DetailCommentInfo,
-      Scroll,
-      DetailGoodsInfo,
-      DetailParamInfo,
-      DetailShopInfo,
-      DetailNav,
-      DetailSwiper,
-      DetailShow
-    },
     data () {
       return {
         iid: {},
@@ -62,36 +57,22 @@
         navTop: [0]
       }
     },
-    created () {
-      // 获取当前商品的iid
-      // console.log(this.$route)
-      this.iid = this.$route.params.iid
-      // 获取详情数据
-      getDetails(this.iid).then((res) => {
-        let data = res.data.result
-        // 获取对应表单需要的数据
-        this.topImages = data.itemInfo.topImages
-        // 获取轮播图
-        this.goodsInfo = new goodsInfo(data.itemInfo, data.columns, data.shopInfo.services)
-        // 获取产品基础信息
-        this.shop = new shop(data.shopInfo)
-        // 获取商店信息
-        this.detailInfo = data.detailInfo
-        // 获取商品详情
-        this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
-        // 保存参数信息
-        if (data.rate.list) {
-          // 展示第一条评论
-          this.commentInfo = data.rate.list[0]
-        }
-      })
-      // 获取推荐数据
-      getRecommond().then((res) => {
-        // console.log(res, ' 我是recommend')
-        this.recommend = res.data.data.list
-      })
+    components: {
+      DetailBottomBar,
+      GoodsList,
+      DetailCommentInfo,
+      Scroll,
+      DetailGoodsInfo,
+      DetailParamInfo,
+      DetailShopInfo,
+      DetailNav,
+      DetailSwiper,
+      DetailShow
     },
     methods: {
+      addToCart () {
+        this.$store.emit('', this.$route.params.iid)
+      },
       getNavTop () {
         //获取
         this.navTop = [0]
@@ -129,7 +110,7 @@
         //   this.$refs.detailNav.currentIndex = 3
         //   this.count++
         // }
-
+        this.isShowToTop = (position.y < 0)
         if ((this.$refs.detailNav.currentIndex !== 0) && position.y > this.navTop[1]) {
           this.$refs.detailNav.currentIndex = 0
         }
@@ -143,6 +124,35 @@
           this.$refs.detailNav.currentIndex = 3
         }
       }
+    },
+    created () {
+      // 获取当前商品的iid
+      // console.log(this.$route)
+      this.iid = this.$route.params.iid
+      // 获取详情数据
+      getDetails(this.iid).then((res) => {
+        let data = res.data.result
+        // 获取对应表单需要的数据
+        this.topImages = data.itemInfo.topImages
+        // 获取轮播图
+        this.goodsInfo = new goodsInfo(data.itemInfo, data.columns, data.shopInfo.services)
+        // 获取产品基础信息
+        this.shop = new shop(data.shopInfo)
+        // 获取商店信息
+        this.detailInfo = data.detailInfo
+        // 获取商品详情
+        this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule)
+        // 保存参数信息
+        if (data.rate.list) {
+          // 展示第一条评论
+          this.commentInfo = data.rate.list[0]
+        }
+      })
+      // 获取推荐数据
+      getRecommond().then((res) => {
+        // console.log(res, ' 我是recommend')
+        this.recommend = res.data.data.list
+      })
     },
     mounted () {
       let refresh = debounce(this.refresh(), 1000)
@@ -159,7 +169,8 @@
         this.getNavTop()
         // console.log('我完成了一次recommend的加载')
       })
-    }
+    },
+    mixins: [backTopMixin]
   }
 </script>
 
