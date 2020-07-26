@@ -1,8 +1,8 @@
 <template>
   <div class="goods-list-item" @click="goToDetail">
     <!--    对gooodslist进行复用-->
-    <img v-if="goodsItem.show" :src="goodsItem.show.img" @load="imgLoad">
-    <img v-else :src="goodsItem.image" @load="recommendLoad">
+    <img v-if="goodsItem.show" v-lazy="getImg" @load="imgLoad">
+    <img v-else v-lazy="goodsItem.image" @load="recommendLoad">
     <p class="goods-list-item-description" :title="goodsItem.title">{{goodsItem.title}}</p>
     <span class="goods-list-item-price">￥{{goodsItem.price}}</span>
     <span class="goods-list-item-cfav">❥{{goodsItem.cfav}}</span>
@@ -20,6 +20,11 @@
         }
       }
     },
+    created () {
+      setTimeout(() => {
+        console.log(this.goodsItem, '我是goodsitem')
+      }, 10000)
+    },
     methods: {
       imgLoad () {
         this.$bus.$emit('refreshImg')
@@ -29,6 +34,11 @@
       },
       goToDetail () {
         this.$router.push('/details/' + this.goodsItem.iid)
+      }
+    },
+    computed: {
+      getImg () {
+        return this.goodsItem.img || this.goodsItem.image || this.goodsItem.show.img
       }
     }
 
